@@ -1,6 +1,12 @@
-import { Circle, Ellipse, Line, Point, Rectangle, Repeat, Rotate, Scale, Translate } from './joy';
-declare class JoyP5 {
-    renderer: Drawable;
+import p5 from "p5";
+import { Circle, Ellipse, Line, Point, Rectangle, Repeat, Rotate, Scale, Transformation, Translate } from './joy';
+declare global {
+    interface Window {
+        p5: typeof p5;
+    }
+}
+export declare class JoyP5 {
+    renderer: Drawable | undefined;
     constructor(renderer?: Drawable);
     point({ x, y, ...kwargs }?: {
         x?: number;
@@ -41,9 +47,9 @@ declare class JoyP5 {
         y?: number;
     }): Scale;
     repeat({ n, transform, fnkwargs }: {
-        n: any;
-        transform: any;
-        fnkwargs?: any;
+        n: number;
+        transform: Transformation;
+        fnkwargs: any;
     }): Repeat;
 }
 export declare abstract class Drawable {
@@ -51,4 +57,3 @@ export declare abstract class Drawable {
     show(): void;
 }
 export declare function initJoyP5(): JoyP5;
-export {};

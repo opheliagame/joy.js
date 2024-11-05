@@ -1,11 +1,11 @@
 import { Drawable } from "./index";
-declare class Shape {
+export declare class Shape {
     tag: string;
     attrs: any;
     kwargs: any;
     transform: Transformation[];
     children: Shape[];
-    constructor(tag: string, attrs?: {}, kwargs?: {}, children?: any[]);
+    constructor(tag: string, attrs?: {}, kwargs?: {}, children?: Shape[]);
     clone(newKwargs?: {}): Shape;
     add(shape: Shape): this;
     show(r?: Drawable): void;
@@ -21,12 +21,15 @@ declare class Shape {
         x?: number;
         y?: number;
     }): this;
-    repeat({ n, transform, fnkwargs }: {
+    repeat({ n, transform, }: {
         n: number;
-        transform: Transformation | ((index: number) => Transformation);
-        fnkwargs?: (index: number) => any;
+        transform: Transformation | ((index: number) => TransformationWithStyle) | ((index: number) => Transformation);
     }): this;
 }
+type TransformationWithStyle = {
+    transform: Transformation;
+    style: any;
+};
 export declare class Point extends Shape {
     x: number;
     y: number;
@@ -56,11 +59,11 @@ export declare class Line extends Shape {
     end: Point;
     constructor(start?: Point, end?: Point, kwargs?: {});
 }
-declare class Transformation {
+export declare class Transformation {
     tag: string;
     attrs: any;
     children: Transformation[];
-    constructor(tag: any, attrs?: {}, children?: any[]);
+    constructor(tag: string, attrs?: {}, children?: Transformation[]);
     show(): void;
     translate({ x, y }?: {
         x?: number;
@@ -89,6 +92,6 @@ export declare class Scale extends Transformation {
     constructor(x?: number, y?: number);
 }
 export declare class Repeat extends Transformation {
-    constructor(n: any, transform: any);
+    constructor(n: number, transform: Transformation);
 }
 export {};

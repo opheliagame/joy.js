@@ -1,11 +1,10 @@
 import p5 from "p5";
 import { Drawable } from "./index";
 
-class Shape {
-  /* Shape is the base class for all shapes in Joy.
-  A Shape is an SVG node and supports converting itthis into svg text.
-  Typically, users do not interact with this class directly, but use it
-  through its subclasses. */
+/**
+ * Represents a 2D shape.
+ */
+export class Shape {
   
   // how to use **attrs
   // TODO remove renderer?
@@ -16,13 +15,20 @@ class Shape {
   transform: Transformation[]
   children: Shape[]
 
-
+  /**
+   * Creates an instance of Shape.
+   * 
+   * @param tag - The name of the shape.
+   * @param attrs - The attributes required for drawing the shape.
+   * @param kwargs - The styling information to be used before drawing the shape.
+   * @param children - Other shapes that are drawn relative to the current instance of Shape.
+   */
   constructor(
     // renderer: Drawable,
     tag: string,
     attrs = {},
     kwargs = {},
-    children = []
+    children: Shape[] = []
   ) {
     // Creates a new shape.
     // this.renderer = renderer
@@ -33,30 +39,53 @@ class Shape {
     this.children = children
   }
 
+  /**
+   * Returns a clone of the current Shape instance with new styling information if available.
+   * 
+   * @param newKwargs - Key value pairs to provide styling information for a shape. eg { fill: 'red', stroke: 'blue' }.
+   * @returns A new instance of Shape.
+   */
   clone(newKwargs = {}) {
     let shape = new Shape(this.tag, this.attrs, newKwargs, [...this.children])
     return shape
   }
 
+  /**
+   * Adds a child shape to the current Shape instance.
+   * 
+   * @param shape - A child shape.
+   * @returns The current instance of Shape for chaining.
+   */
   add(shape: Shape) {
     this.children.push(shape)
     return this
   }
 
+  /**
+   * Displays a shape.
+   * Steps performed for display are as follows.
+   *  - Apply the transforms that exist on a shape.
+   *  - Apply the styling that exists on a shape.
+   *  - Draw the shape.
+   *  - Draw children shapes.
+   * 
+   * @param r - An instance of Drawable.
+   */
   show(r?: Drawable) {  
-    console.log("showing")
+    // TODO show function uses type casting to any 
+    
     let renderer = (window.self as any) as p5 
 
-
+      // console.log(`showing ${this.tag}`)
       // try {
       renderer['push']()
       this.transform.forEach(t => t.show())
 
       for(const [key, value] of Object.entries(this.kwargs)) {
-        renderer[key](value)
+        (renderer as any)[key](value)
       }
 
-      renderer[this.tag](...Object.values(this.attrs))
+      (renderer as any)[this.tag](...Object.values(this.attrs))
       this.children.forEach(child => child.show())
       renderer['pop']()
     // } catch(error) {
@@ -65,84 +94,156 @@ class Shape {
 
   }
 
+  /**
+   * Returns a string representation of Shape.
+   * 
+   * @returns - A string with the name of the shape and its' attributes.
+   */
   toString() {
     return `<${this.tag} ${this.attrs}>`
   }
 
-  // all transformation functions return a shape
-  translate({
-    x = 0, 
-    y = 0
-  }={x: 0, y: 0}) {
+  /**
+   * Applies a Translate transformation to the current Shape instance.
+   * 
+   * @param x - Amount to translate along the positive x-axis. Defaults to `0`.
+   * @param y - Amount to translate along the positive y-axis. Defaults to `0`.
+   * @returns The current instance of Shape for chaining.
+   */
+  translate(x: number = 0, y: number = 0) {
     let transform = new Translate(x, y)
     this.transform.push(transform)
     return this
   }
 
-  rotate({
-    angle = 0
-  }={angle: 0}) {
+  /**
+   * Applies a Rotate transformation to the current Shape instance.
+   * 
+   * @param angle - Amount to rotate clockwise in degrees. Defaults to `0`.
+   * @returns The current instance of Shape for chaining.
+   */
+  rotate(angle: number = 0) {
     let transform = new Rotate(angle)
     this.transform.push(transform)
     return this
   }
 
-  scale({
-    x = 1, 
-    y = 1
-  }={x: 1, y: 1}) {
+  /**
+   * Applies a Scale transformation to the current Shape instance.
+   * 
+   * @param x - Amount to scale along the positive x-axis. Defaults to `1`.
+   * @param y - Amount to scale along the positive y-axis. Defaults to `1`.
+   * @returns The current instance of Shape for chaining.
+   */
+  scale(x: number = 1, y: number = 1) {
     let transform = new Scale(x, y)
     this.transform.push(transform)
     return this
   }
 
-  repeat({
-    n,
-    transform,
-    fnkwargs = null
-  }: {
+ 
+  /**
+   * Repeats the current shape `n` times by applying `transform` iteratively. 
+   * 
+   * 
+   * @param n - A positive integer representing the number of times a shape is to be repeated.
+   * @param transform - An instance of Transformation that is applied every time the shape is repeated.
+   * @returns The current instance of Shape for chaining.
+   */  
+  repeat(
     n: number,
-    transform: Transformation | ((index: number) => Transformation),
-    fnkwargs?: (index: number) => any
-  }) {
-    let c = this.clone()
-    Array(n).fill(0).map((_, i) => {
-      let tr = transform instanceof Transformation ? transform : transform(i)
-      let t = new Repeat(n-(i-1), tr)
-      let newKwargs = fnkwargs != null ? fnkwargs(i) : {}
-      let cn = c.clone(newKwargs)
-      cn.transform.push(t)
-      this.children.push(cn)
-    })
-    return this
+    transform: Transformation | ((index: number) => TransformationWithStyle) | ((index: number) => Transformation),
+  ) {
+    let c = this.clone();
+    Array(n).fill(0).forEach((_, i) => {
+        // console.log(`repeat iteration ${i}`);
+        let tr: Transformation;
+        let newKwargs: any = {};
+
+        if (typeof transform === "function") {
+          const result = transform(i);
+          if (result instanceof Transformation) {
+            tr = result;
+          } else {
+            tr = result.transform;
+            newKwargs = result.style || {};
+          }
+        } else {
+          tr = transform;
+        }
+
+        if(transform instanceof Transformation && i == 0) return
+
+        let t = transform instanceof Transformation ? new Repeat(i-1, tr) : tr;
+        let cn = c.clone(newKwargs);
+        cn.transform.push(t);
+        this.children.push(cn);
+      });
+    return this;
   }
 }
 
+type TransformationWithStyle = {
+  transform: Transformation,
+  style: any
+}
+
+/**
+ * Represents a Point shape.
+ */
 export class Point extends Shape {
   x: number
   y: number
 
+  /**
+   * Creates an instance of Point.
+   * 
+   * @param x - The x-coordinate of the point. Defaults to `0`.
+   * @param y - The y-coordinate of the point. Defaults to `0`.
+   * @param kwargs 
+   */
   constructor(x=0, y=0, kwargs={}) {
     super("point", {x: x, y: y})
     this.x = x
     this.y = y
   }
 
+  /**
+   * Checks if the Point passed as the parameter is equal to the current instance.
+   * 
+   * @param p - An instance of Point.
+   * @returns A boolean representing whether the current Point instance has the same attributes as the parameter.
+   */
   equals(p: Point) {
     return p instanceof Point && 
            p.x === this.x && 
            p.y === this.y
   }
 
+  /**
+   * Returns a string representation of Point.
+   * 
+   * @returns A string with the name of the shape and its' attributes.
+   */
   toString() {
     return `Point(${this.x}, ${this.y})`
   }
 }
 
+/**
+ * Represents a Circle shape.
+ */
 export class Circle extends Shape {
   center: Point
   radius: number
 
+  /**
+   * Creates an instance of Circle.
+   * 
+   * @param center - The position of the center of the circle. Defaults to `(0, 0)`.
+   * @param radius - The radius of the circle. Defaults to `100`.
+   * @param style - The style information for displaying the circle. Defaults to no styling or `{}`.
+   */
   constructor(center=new Point(0, 0), radius=100, style={}) {
     super("circle", {cx: center.x, cy: center.y, d: radius*2}, style)
     this.center = center
@@ -150,11 +251,22 @@ export class Circle extends Shape {
   }
 }
 
+/**
+ * Represents an Ellipse shape.
+ */
 export class Ellipse extends Shape {
   center: Point
   width: number
   height: number
 
+  /**
+   * Creates an instance of Ellipse.
+   * 
+   * @param center - The position of the center of the ellipse. Defaults to `(0, 0)`.
+   * @param width - The width of the ellipse. Defaults to `200`.
+   * @param height - The height of the ellipse. Defaults to `100`.
+   * @param style - The style information for displaying the ellipse. Defaults to no styling or `{}`.
+   */
   constructor(center=new Point(0, 0), width=200, height=100, style={}) {
     super("ellipse", {x: center.x, y: center.y, w: width, h: height, d: 50}, style)
     this.center = center
@@ -163,11 +275,22 @@ export class Ellipse extends Shape {
   }
 }
 
+/**
+ * Represents a Rectangle shape.
+ */
 export class Rectangle extends Shape {
   center: Point
   width: number
   height: number
 
+  /**
+   * Creates an instance of Rectangle.
+   * 
+   * @param center - The position of the center of the rectangle. Defaults to `(0, 0)`.
+   * @param width - The width of the rectangle. Defaults to `200`.
+   * @param height - The height of the rectangle. Defaults to `100`.
+   * @param style - The style information for displaying the rectangle. Defaults to no styling or `{}`.
+   */
   constructor(center=new Point(0, 0), width=200, height=100, style={}) {
     super("rect", {x: center.x, y: center.y, w: width, h: height}, style)
     this.center = center
@@ -176,10 +299,20 @@ export class Rectangle extends Shape {
   }
 }
 
+/**
+ * Represents a Line shape.
+ */
 export class Line extends Shape {
   start: Point
   end: Point
   
+  /**
+   * Creates an instance of Line.
+   * 
+   * @param start - The first point of the line segment. Defaults to `(-100, 0)`.
+   * @param end - The second point of the line segment. Defaults to `(100, 0)`
+   * @param kwargs - The style information for displaying the rectangle. Defaults to no styling or `{}`.
+   */
   constructor(start=new Point(-100, 0), end=new Point(100, 0), kwargs={}) {
     super("line", {x1: start.x, y1: start.y, x2: end.x, y2: end.y})
     this.start = start
@@ -187,15 +320,25 @@ export class Line extends Shape {
   }
 }
 
-class Transformation {
+/**
+ * Represents a transformation that can be applied to a Shape.
+ */
+export class Transformation {
   tag: string
   attrs: any
   children: Transformation[]
 
+  /**
+   * Creates an instance of Transformation.
+   * 
+   * @param tag - The name of the transformation.
+   * @param attrs - The attributes required to apply the transformation.
+   * @param children - Other transformations that are applied relative to the parent transformation.
+   */
   constructor(
-    tag,
+    tag: string,
     attrs = {},
-    children = []
+    children: Transformation[] = []
   ) {
     this.tag = tag
     this.attrs = attrs
@@ -203,38 +346,50 @@ class Transformation {
   }
 
   show() {
-    console.log("showing transform")
+    // console.log(`applying ${this.tag} ${Object.values(this.attrs)}`)
+
+    // TODO transform show function also uses type casting to any 
     let renderer = (window.self as any) as p5 
 
-    renderer[this.tag](...Object.values(this.attrs))
+    (renderer as any)[this.tag](...Object.values(this.attrs))
     this.children.forEach(transform => {
       return transform.show()
     })
   }
 
-  // piping transforms together
-  // translate().rotate().scale()
-  translate({
-    x = 0, 
-    y = 0
-  }={x: 0, y: 0}) {
+  /**
+   * Adds a Translate transformation to the current transformation.
+   * 
+   * @param x - The amount to translate along the positive x-axis. Defaults to `0`.
+   * @param y - The amount to translate along the positive y-axis. Defaults to `0`.
+   * @returns The current instance of Transformation for chaining.
+   */
+  translate(x: number = 0, y: number = 0) {
     let transform = new Translate(x, y)
     this.children.push(transform)
     return this
   }
 
-  rotate({
-    angle = 0
-  }={angle: 0}) {
+  /**
+   * Adds a Rotate transformation to the current transformation.
+   * 
+   * @param angle - The amount to rotate clockwise in degrees. Defaults to `0`.
+   * @returns The current instance of Transformation for chaining.
+   */
+  rotate(angle: number = 0) {
     let transform = new Rotate(angle)
     this.children.push(transform)
     return this
   }
 
-  scale({
-    x = 1, 
-    y = x
-  }={x: 1, y: 1}) {
+  /**
+   * Adds a Scale transformation to the current transformation.
+   * 
+   * @param x - The amount to scale in the positive x-axis. Defaults to `1`.
+   * @param y - The amount to scale in the positive y-axis. Defaults to `1`.
+   * @returns The current instance of Transformation for chaining.
+   */
+  scale(x: number = 1, y: number = 1) {
     let transform = new Scale(x, y)
     this.children.push(transform)
     return this
@@ -242,10 +397,19 @@ class Transformation {
 
 }
 
+/**
+ * Represents a Translate transformation.
+ */
 export class Translate extends Transformation {
   x: number
   y: number
 
+  /**
+   * Creates an instance of Translate.
+   * 
+   * @param x - The amount to translate along the positive x-axis. Defaults to `0`.
+   * @param y - The amount to translate along the positive y-axis. Defaults to `0`.
+   */
   constructor(x=0, y=0) {
     super("translate", {x: x, y: y})
     this.x = x
@@ -253,19 +417,36 @@ export class Translate extends Transformation {
   }
 }
 
+/**
+ * Represents a Rotate transformation.
+ */
 export class Rotate extends Transformation {
   angle: number
 
+  /**
+   * Creates an instance of Roate.
+   * 
+   * @param angle - The amount to rotate clockwise in degrees. Defaults to `0`.
+   */
   constructor(angle=0) {
     super("rotate", {angle: -angle})
     this.angle = -angle
   }
 }
 
+/**
+ * Represents a Scale transformation.
+ */
 export class Scale extends Transformation {
   x: number
   y: number
 
+  /**
+   * Creates an instance of Scale.
+   * 
+   * @param x - The amount to scale in the positive x-axis. Defaults to `1`.
+   * @param y - The amount to scale in the positive y-axis. Defaults to `1`.
+   */
   constructor(x=1, y=1) {
     super("scale", {x: x, y: y})
     this.x = x
@@ -273,12 +454,15 @@ export class Scale extends Transformation {
   }
 }
 
+/**
+ * Represents a Repeat transform.
+ */
 export class Repeat extends Transformation {
 
-  constructor(n, transform) {
+  constructor(n: number, transform: Transformation) {
     // transform should be of instance Transformation
     if (!(transform instanceof Transformation)) return
-    let children = []
+    let children: Transformation[]  = []
     for(let i = 0; i < n; i++) {
       let p = new Transformation(transform.tag, transform.attrs)
       let c = transform.children.map(child => {
@@ -362,6 +546,10 @@ function repeat({
   n,
   transform,
   fnkwargs = null
+}: {
+  n: number,
+  transform: Transformation,
+  fnkwargs: any
 }) {
   return new Repeat(n, transform)
 }

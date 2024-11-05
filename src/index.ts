@@ -1,12 +1,17 @@
-import * as p5 from "p5";
-import { Circle, Ellipse, Line, Point, Rectangle, Repeat, Rotate, Scale, Translate } from './joy'
+import p5 from "p5";
+import { Circle, Ellipse, Line, Point, Rectangle, Repeat, Rotate, Scale, Transformation, Translate } from './joy'
 
-class JoyP5 {
-  renderer: Drawable
+declare global {
+  interface Window {
+    p5: typeof p5; 
+  }
+}
+
+export class JoyP5 {
+  renderer: Drawable | undefined
 
   constructor(renderer?: Drawable) {
     this.renderer = renderer
-
     
   }
 
@@ -99,7 +104,7 @@ class JoyP5 {
     n,
     transform,
     fnkwargs = null
-  }) {
+  }: {n: number, transform: Transformation, fnkwargs: any}) {
     let drawable = new Repeat(n, transform)
     return drawable
   }
@@ -114,9 +119,9 @@ export abstract class Drawable {
 }
 
 class P5Renderer implements Drawable {
-  renderer: p5.Renderer;
+  renderer: typeof p5;
 
-  constructor(renderer: p5.Renderer) {
+  constructor(renderer: typeof p5) {
     this.renderer = renderer
   }
 

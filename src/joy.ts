@@ -1,7 +1,7 @@
 import p5 from "p5";
 import { Drawable } from "./index";
 
-class Shape {
+export class Shape {
   /* Shape is the base class for all shapes in Joy.
   A Shape is an SVG node and supports converting itthis into svg text.
   Typically, users do not interact with this class directly, but use it
@@ -22,7 +22,7 @@ class Shape {
     tag: string,
     attrs = {},
     kwargs = {},
-    children = []
+    children: Shape[] = []
   ) {
     // Creates a new shape.
     // this.renderer = renderer
@@ -44,19 +44,20 @@ class Shape {
   }
 
   show(r?: Drawable) {  
-    console.log("showing")
+    // TODO show function uses type casting to any 
+    
     let renderer = (window.self as any) as p5 
 
-
+      // console.log(`showing ${this.tag}`)
       // try {
       renderer['push']()
       this.transform.forEach(t => t.show())
 
       for(const [key, value] of Object.entries(this.kwargs)) {
-        renderer[key](value)
+        (renderer as any)[key](value)
       }
 
-      renderer[this.tag](...Object.values(this.attrs))
+      (renderer as any)[this.tag](...Object.values(this.attrs))
       this.children.forEach(child => child.show())
       renderer['pop']()
     // } catch(error) {
@@ -96,26 +97,47 @@ class Shape {
     return this
   }
 
+ 
+
   repeat({
     n,
     transform,
-    fnkwargs = null
   }: {
     n: number,
-    transform: Transformation | ((index: number) => Transformation),
-    fnkwargs?: (index: number) => any
+    transform: Transformation | ((index: number) => TransformationWithStyle) | ((index: number) => Transformation),
   }) {
-    let c = this.clone()
-    Array(n).fill(0).map((_, i) => {
-      let tr = transform instanceof Transformation ? transform : transform(i)
-      let t = new Repeat(n-(i-1), tr)
-      let newKwargs = fnkwargs != null ? fnkwargs(i) : {}
-      let cn = c.clone(newKwargs)
-      cn.transform.push(t)
-      this.children.push(cn)
-    })
-    return this
+    let c = this.clone();
+    Array(n).fill(0).forEach((_, i) => {
+        // console.log(`repeat iteration ${i}`);
+        let tr: Transformation;
+        let newKwargs: any = {};
+
+        if (typeof transform === "function") {
+          const result = transform(i);
+          if (result instanceof Transformation) {
+            tr = result;
+          } else {
+            tr = result.transform;
+            newKwargs = result.style || {};
+          }
+        } else {
+          tr = transform;
+        }
+
+        if(transform instanceof Transformation && i == 0) return
+
+        let t = transform instanceof Transformation ? new Repeat(i-1, tr) : tr;
+        let cn = c.clone(newKwargs);
+        cn.transform.push(t);
+        this.children.push(cn);
+      });
+    return this;
   }
+}
+
+type TransformationWithStyle = {
+  transform: Transformation,
+  style: any
 }
 
 export class Point extends Shape {
@@ -187,15 +209,15 @@ export class Line extends Shape {
   }
 }
 
-class Transformation {
+export class Transformation {
   tag: string
   attrs: any
   children: Transformation[]
 
   constructor(
-    tag,
+    tag: string,
     attrs = {},
-    children = []
+    children: Transformation[] = []
   ) {
     this.tag = tag
     this.attrs = attrs
@@ -203,10 +225,12 @@ class Transformation {
   }
 
   show() {
-    console.log("showing transform")
+    // console.log(`applying ${this.tag} ${Object.values(this.attrs)}`)
+
+    // TODO transform show function also uses type casting to any 
     let renderer = (window.self as any) as p5 
 
-    renderer[this.tag](...Object.values(this.attrs))
+    (renderer as any)[this.tag](...Object.values(this.attrs))
     this.children.forEach(transform => {
       return transform.show()
     })
@@ -275,10 +299,10 @@ export class Scale extends Transformation {
 
 export class Repeat extends Transformation {
 
-  constructor(n, transform) {
+  constructor(n: number, transform: Transformation) {
     // transform should be of instance Transformation
     if (!(transform instanceof Transformation)) return
-    let children = []
+    let children: Transformation[]  = []
     for(let i = 0; i < n; i++) {
       let p = new Transformation(transform.tag, transform.attrs)
       let c = transform.children.map(child => {
@@ -362,6 +386,10 @@ function repeat({
   n,
   transform,
   fnkwargs = null
+}: {
+  n: number,
+  transform: Transformation,
+  fnkwargs: any
 }) {
   return new Repeat(n, transform)
 }

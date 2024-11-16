@@ -1,13 +1,9 @@
 import p5 from "p5";
-import { Circle, Ellipse, Line, Point, Rectangle, Repeat, Rotate, Scale, Transformation, Translate } from './joy';
-declare global {
-    interface Window {
-        p5: typeof p5;
-    }
-}
-export declare class JoyP5 {
-    renderer: Drawable | undefined;
-    constructor(renderer?: Drawable);
+import { Circle, Ellipse, Line, Point, Rectangle, Repeat, Rotate, Scale, Shape, Transformation, Translate } from './joy';
+import { map } from "./utils";
+export declare class Joy {
+    renderer: Renderer | undefined;
+    constructor(renderer?: Renderer);
     point({ x, y, ...kwargs }?: {
         x?: number;
         y?: number;
@@ -52,8 +48,30 @@ export declare class JoyP5 {
         fnkwargs: any;
     }): Repeat;
 }
-export declare abstract class Drawable {
+declare abstract class Renderer {
     renderer: any;
-    show(): void;
+    constructor(renderer: any);
+    show(shape: Shape): void;
+    showTransform(transform: Transformation): void;
 }
-export declare function initJoyP5(): JoyP5;
+declare global {
+    interface Window {
+        p5: typeof p5;
+    }
+}
+export declare class P5Renderer extends Renderer {
+    renderer: any;
+    constructor(renderer: typeof window.p5);
+    debug(shape: Shape): void;
+    show(shape: Shape): void;
+    showTransform(transform: Transformation): void;
+}
+export declare class SVGRenderer extends Renderer {
+    renderer: Document;
+    namespace: string;
+    constructor(renderer: Document);
+    show(shape: Shape): void;
+    getSvgElement(shape: Shape): Element;
+}
+export declare function joy(): Joy;
+export { map };

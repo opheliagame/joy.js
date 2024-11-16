@@ -1,6 +1,6 @@
 function setup() {
   let canvas = createCanvas(400, 400)
-  let joy = joyP5.initJoyP5(canvas)
+  let joy = joyP5.joy(canvas)
 
   background(220)
 
@@ -16,7 +16,7 @@ function setup() {
   translate(-width/2, -height/2)
   noStroke()
 
-  joy.rectangle({ w: xedge, h: yedge })
+  let shape = joy.rectangle({ w: xedge, h: yedge })
   .translate({ x: xedge/2, y: yedge/2 })
   .repeat({
     n: xres*yres,
@@ -31,7 +31,9 @@ function setup() {
       }
     },
   })
-  .show()
+  
+  let renderer = new joyP5.P5Renderer(this)
+  renderer.show(shape)
   
   pop()
 

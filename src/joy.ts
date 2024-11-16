@@ -1,5 +1,11 @@
 import p5 from "p5";
-import { Drawable } from "./index";
+export type ShapeType = "point" | "circle" | "ellipse" | "rect" | "line"
+
+interface PointAttributes { x: number, y: number }
+interface CircleAttributes { cx: number, cy: number, d: number }
+interface EllipseAttributes { x: number, y: number, width: number, height: number, d: number }
+interface RectangleAttributes { x: number, y: number, width: number, height: number }
+interface LineAttributes { x1: number, y1: number, x2: number, y2: number }
 
 /**
  * Represents a 2D shape.
@@ -9,8 +15,8 @@ export class Shape {
   // how to use **attrs
   // TODO remove renderer?
   // renderer: Drawable
-  tag: string
-  attrs: any
+  tag: ShapeType
+  attrs: PointAttributes | CircleAttributes | EllipseAttributes | RectangleAttributes | LineAttributes
   kwargs: any
   transform: Transformation[]
   children: Shape[]
@@ -25,8 +31,8 @@ export class Shape {
    */
   constructor(
     // renderer: Drawable,
-    tag: string,
-    attrs = {},
+    tag: ShapeType,
+    attrs: PointAttributes | CircleAttributes | EllipseAttributes | RectangleAttributes | LineAttributes,
     kwargs = {},
     children: Shape[] = []
   ) {
@@ -62,39 +68,6 @@ export class Shape {
   }
 
   /**
-   * Displays a shape.
-   * Steps performed for display are as follows.
-   *  - Apply the transforms that exist on a shape.
-   *  - Apply the styling that exists on a shape.
-   *  - Draw the shape.
-   *  - Draw children shapes.
-   * 
-   * @param r - An instance of Drawable.
-   */
-  show(r?: Drawable) {  
-    // TODO show function uses type casting to any 
-    
-    let renderer = (window.self as any) as p5 
-
-      // console.log(`showing ${this.tag}`)
-      // try {
-      renderer['push']()
-      this.transform.forEach(t => t.show())
-
-      for(const [key, value] of Object.entries(this.kwargs)) {
-        (renderer as any)[key](value)
-      }
-
-      (renderer as any)[this.tag](...Object.values(this.attrs))
-      this.children.forEach(child => child.show())
-      renderer['pop']()
-    // } catch(error) {
-    //   throw new Error('show call missing p5 instance name')
-    // }
-
-  }
-
-  /**
    * Returns a string representation of Shape.
    * 
    * @returns - A string with the name of the shape and its' attributes.
@@ -110,7 +83,7 @@ export class Shape {
    * @param y - Amount to translate along the positive y-axis. Defaults to `0`.
    * @returns The current instance of Shape for chaining.
    */
-  translate(x: number = 0, y: number = 0) {
+  translate({x = 0, y = 0}) {
     let transform = new Translate(x, y)
     this.transform.push(transform)
     return this
@@ -122,7 +95,7 @@ export class Shape {
    * @param angle - Amount to rotate clockwise in degrees. Defaults to `0`.
    * @returns The current instance of Shape for chaining.
    */
-  rotate(angle: number = 0) {
+  rotate({angle = 0}) {
     let transform = new Rotate(angle)
     this.transform.push(transform)
     return this
@@ -135,7 +108,7 @@ export class Shape {
    * @param y - Amount to scale along the positive y-axis. Defaults to `1`.
    * @returns The current instance of Shape for chaining.
    */
-  scale(x: number = 1, y: number = 1) {
+  scale({x = 1, y = 1}) {
     let transform = new Scale(x, y)
     this.transform.push(transform)
     return this
@@ -150,10 +123,10 @@ export class Shape {
    * @param transform - An instance of Transformation that is applied every time the shape is repeated.
    * @returns The current instance of Shape for chaining.
    */  
-  repeat(
+  repeat({n, transform} : {
     n: number,
     transform: Transformation | ((index: number) => TransformationWithStyle) | ((index: number) => Transformation),
-  ) {
+  }) {
     let c = this.clone();
     Array(n).fill(0).forEach((_, i) => {
         // console.log(`repeat iteration ${i}`);
@@ -164,20 +137,29 @@ export class Shape {
           const result = transform(i);
           if (result instanceof Transformation) {
             tr = result;
+            newKwargs = this.kwargs;
           } else {
             tr = result.transform;
             newKwargs = result.style || {};
           }
         } else {
           tr = transform;
+          newKwargs = this.kwargs;
         }
 
+        // console.log(`repeat iteration ${i}`)
+        // console.log(tr)
+        // console.log(transform)
+        // console.log(tr instanceof Transformation)
         if(transform instanceof Transformation && i == 0) return
 
         let t = transform instanceof Transformation ? new Repeat(i-1, tr) : tr;
         let cn = c.clone(newKwargs);
         cn.transform.push(t);
         this.children.push(cn);
+
+        // console.log(`repeat iteration ${i}`);
+        // console.log(cn)
       });
     return this;
   }
@@ -268,7 +250,7 @@ export class Ellipse extends Shape {
    * @param style - The style information for displaying the ellipse. Defaults to no styling or `{}`.
    */
   constructor(center=new Point(0, 0), width=200, height=100, style={}) {
-    super("ellipse", {x: center.x, y: center.y, w: width, h: height, d: 50}, style)
+    super("ellipse", {x: center.x, y: center.y, width: width, height: height, d: 50}, style)
     this.center = center
     this.width = width
     this.height = height
@@ -292,7 +274,7 @@ export class Rectangle extends Shape {
    * @param style - The style information for displaying the rectangle. Defaults to no styling or `{}`.
    */
   constructor(center=new Point(0, 0), width=200, height=100, style={}) {
-    super("rect", {x: center.x, y: center.y, w: width, h: height}, style)
+    super("rect", {x: center.x, y: center.y, width: width, height: height}, style)
     this.center = center
     this.width = width
     this.height = height
@@ -345,17 +327,17 @@ export class Transformation {
     this.children = children
   }
 
-  show() {
-    // console.log(`applying ${this.tag} ${Object.values(this.attrs)}`)
+  // show() {
+  //   // console.log(`applying ${this.tag} ${Object.values(this.attrs)}`)
 
-    // TODO transform show function also uses type casting to any 
-    let renderer = (window.self as any) as p5 
+  //   // TODO transform show function also uses type casting to any 
+  //   let renderer = (window.self as any) as p5 
 
-    (renderer as any)[this.tag](...Object.values(this.attrs))
-    this.children.forEach(transform => {
-      return transform.show()
-    })
-  }
+  //   (renderer as any)[this.tag](...Object.values(this.attrs))
+  //   this.children.forEach(transform => {
+  //     return transform.show()
+  //   })
+  // }
 
   /**
    * Adds a Translate transformation to the current transformation.

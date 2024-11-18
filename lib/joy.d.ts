@@ -36,6 +36,7 @@ export declare class Shape {
     kwargs: any;
     transform: Transformation[];
     children: Shape[];
+    repeatChildren: Shape[];
     /**
      * Creates an instance of Shape.
      *
@@ -44,7 +45,7 @@ export declare class Shape {
      * @param kwargs - The styling information to be used before drawing the shape.
      * @param children - Other shapes that are drawn relative to the current instance of Shape.
      */
-    constructor(tag: ShapeType, attrs: PointAttributes | CircleAttributes | EllipseAttributes | RectangleAttributes | LineAttributes, kwargs?: {}, children?: Shape[]);
+    constructor(tag: ShapeType, attrs: PointAttributes | CircleAttributes | EllipseAttributes | RectangleAttributes | LineAttributes, kwargs?: {}, children?: Shape[], repeatChildren?: Shape[]);
     /**
      * Returns a clone of the current Shape instance with new styling information if available.
      *
@@ -73,8 +74,8 @@ export declare class Shape {
      * @returns The current instance of Shape for chaining.
      */
     translate({ x, y }: {
-        x?: number;
-        y?: number;
+        x?: number | undefined;
+        y?: number | undefined;
     }): this;
     /**
      * Applies a Rotate transformation to the current Shape instance.
@@ -83,7 +84,7 @@ export declare class Shape {
      * @returns The current instance of Shape for chaining.
      */
     rotate({ angle }: {
-        angle?: number;
+        angle?: number | undefined;
     }): this;
     /**
      * Applies a Scale transformation to the current Shape instance.
@@ -93,8 +94,8 @@ export declare class Shape {
      * @returns The current instance of Shape for chaining.
      */
     scale({ x, y }: {
-        x?: number;
-        y?: number;
+        x?: number | undefined;
+        y?: number | undefined;
     }): this;
     /**
      * Repeats the current shape `n` times by applying `transform` iteratively.
@@ -104,9 +105,9 @@ export declare class Shape {
      * @param transform - An instance of Transformation that is applied every time the shape is repeated.
      * @returns The current instance of Shape for chaining.
      */
-    repeat({ n, transform }: {
+    repeat({ n, transform, }: {
         n: number;
-        transform: Transformation | ((index: number) => TransformationWithStyle) | ((index: number) => Transformation);
+        transform: Transformation | Transformation[] | ((index: number) => TransformationWithStyle) | ((index: number) => Transformation | Transformation[]);
     }): this;
 }
 type TransformationWithStyle = {
@@ -205,12 +206,23 @@ export declare class Line extends Shape {
      */
     constructor(start?: Point, end?: Point, kwargs?: {});
 }
+interface TranslateAttributes {
+    x: number;
+    y: number;
+}
+interface RotateAttributes {
+    angle: number;
+}
+interface ScaleAttributes {
+    x: number;
+    y: number;
+}
 /**
  * Represents a transformation that can be applied to a Shape.
  */
 export declare class Transformation {
     tag: string;
-    attrs: any;
+    attrs: TranslateAttributes | RotateAttributes | ScaleAttributes;
     children: Transformation[];
     /**
      * Creates an instance of Transformation.
@@ -219,7 +231,7 @@ export declare class Transformation {
      * @param attrs - The attributes required to apply the transformation.
      * @param children - Other transformations that are applied relative to the parent transformation.
      */
-    constructor(tag: string, attrs?: {}, children?: Transformation[]);
+    constructor(tag: string, attrs: TranslateAttributes | RotateAttributes | ScaleAttributes, children?: Transformation[]);
     /**
      * Adds a Translate transformation to the current transformation.
      *
@@ -227,14 +239,19 @@ export declare class Transformation {
      * @param y - The amount to translate along the positive y-axis. Defaults to `0`.
      * @returns The current instance of Transformation for chaining.
      */
-    translate(x?: number, y?: number): this;
+    translate({ x, y }: {
+        x?: number | undefined;
+        y?: number | undefined;
+    }): this;
     /**
      * Adds a Rotate transformation to the current transformation.
      *
      * @param angle - The amount to rotate clockwise in degrees. Defaults to `0`.
      * @returns The current instance of Transformation for chaining.
      */
-    rotate(angle?: number): this;
+    rotate({ angle }: {
+        angle?: number | undefined;
+    }): this;
     /**
      * Adds a Scale transformation to the current transformation.
      *
@@ -242,7 +259,14 @@ export declare class Transformation {
      * @param y - The amount to scale in the positive y-axis. Defaults to `1`.
      * @returns The current instance of Transformation for chaining.
      */
-    scale(x?: number, y?: number): this;
+    scale({ x, y }: {
+        x?: number | undefined;
+        y?: number | undefined;
+    }): this;
+    repeat({ n, transform, }: {
+        n: number;
+        transform: Transformation | ((index: number) => Transformation);
+    }): this;
 }
 /**
  * Represents a Translate transformation.

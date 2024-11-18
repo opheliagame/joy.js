@@ -6,7 +6,7 @@ function setup() {
 // function draw() {
   background(220)
 
-  let joy = joyP5.initJoyP5(can)
+   = joy.joy()
 
   // example : Draw a circle
   // joy.circle()

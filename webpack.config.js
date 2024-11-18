@@ -3,9 +3,9 @@ const path = require('path');
 module.exports = {
   entry: './src/index.ts',
   output: {
-    filename: 'joy.p5.js',
+    filename: 'joy.js',
     path: path.resolve(__dirname, 'dist'),
-    library: 'joyP5',           // The global name for the library
+    library: 'joy',           // The global name for the library
     libraryTarget: 'umd',           // Supports both CommonJS and script tags
     umdNamedDefine: true
   },

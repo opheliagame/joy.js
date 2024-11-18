@@ -2,7 +2,7 @@
   "compilerOptions": {
     // "outDir": "./build",
     // "module": "System",
-    // "outFile": "./build/joy.p5.js",
+    // "outFile": "./build/joy.js",
     "allowJs": true,
     "target": "ES2015",
     "lib": ["ES2017", "DOM"],
@@ -12,7 +12,7 @@
 		"rootDir": "./src",
 		"outDir": "./lib",
 		"declarationDir": "./lib",
-    // "strict": true,
+    "strict": true,
 		"esModuleInterop": true,
 		"resolveJsonModule": true,
 		"forceConsistentCasingInFileNames": true,

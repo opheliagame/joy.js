@@ -1,4 +1,3 @@
-let joy = joyP5.joy()
 
 let xres = 8, yres = 8
 let xedge = 800/xres
@@ -12,5 +11,5 @@ let shape = joy
   });
 
 
-let renderer = new joyP5.SVGRenderer(document);
+let renderer = new joy.SVGRenderer(document);
 renderer.show(shape);

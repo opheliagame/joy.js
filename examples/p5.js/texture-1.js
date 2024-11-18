@@ -1,4 +1,4 @@
-let joy
+
 let img 
 
 function preload() {
@@ -7,13 +7,17 @@ function preload() {
 
 function setup() {
   let canvas = createCanvas(400, 400, WEBGL)
-  joy = joyP5.initJoyP5(canvas);
+  
 }
 
 function draw() {
   background('whitesmoke')
 
+  translate(-width/2, -height/2)
   texture(img)
-  joy.rectangle().show()
+  let shape = joy.rectangle()
+
+  let renderer = new joy.P5Renderer(this)
+  renderer.show(shape)
 
 }

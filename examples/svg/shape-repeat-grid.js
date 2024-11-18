@@ -1,4 +1,3 @@
-let joy = joyP5.joy();
 
 let xres = 8,
   yres = 8;
@@ -16,11 +15,11 @@ let shape = joy
       return {
         transform: joy.translate({ x: x * xedge, y: y * yedge }),
         style: {
-          fill: `rgba(${joyP5.map(x, 0, xres, 0, 255)}, ${joyP5.map(y, 0, yres, 0, 255)}, 100, 1)`,
+          fill: `rgba(${joy.map(x, 0, xres, 0, 255)}, ${joy.map(y, 0, yres, 0, 255)}, 100, 1)`,
         },
       };
     },
   });
 
-let renderer = new joyP5.SVGRenderer(document);
+let renderer = new joy.SVGRenderer(document);
 renderer.show(shape);

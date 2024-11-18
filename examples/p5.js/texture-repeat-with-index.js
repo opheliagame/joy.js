@@ -1,4 +1,4 @@
-let joy
+
 let img 
 
 function preload() {
@@ -7,11 +7,10 @@ function preload() {
 
 function setup() {
   let canvas = createCanvas(400, 400, WEBGL)
-  joy = joyP5.initJoyP5(canvas);
+  
 }
 
 function draw() {
-  // background()
 
   let t = millis()/10
   let xres = 4, yres = floor(noise(floor(t/100)) * 8)
@@ -19,11 +18,11 @@ function draw() {
   let yedge = width/yres
   texture(img)
 
-  push()
-  translate(-width/2, -height/2)
+  // push()
+  translate(-width, -height)
   noStroke()
 
-  joy.rectangle({ w: xedge/2 * abs(sin(noise(t))) + 20, h: yedge })
+  let shape = joy.rectangle({ w: xedge/2 * abs(sin(noise(t))) + 20, h: yedge })
   .translate({ x: xedge/2, y: yedge/2 })
   .repeat({
     n: xres*yres,
@@ -35,6 +34,8 @@ function draw() {
         .scale({x: abs(sin(t)) + 0.2, y: abs(sin(t+PI)) + 0.2})
     },
   })
-  .show()
+  
+  let renderer = new joy.P5Renderer(this)
+  renderer.show(shape)
 
 }

@@ -13,28 +13,6 @@ these two libraries have distinct ways of thinking about graphics and this is wh
 - currently joy does not support animating shapes. animation of shapes created using joy driven with p5js is exciting 
 - p5.js also has a lot of support for camera, video and image. bringing this into joy is also exciting 
 
-## API 
-
-```js
-shape = point({x: x, y: y})
-
-shape = circle({x: x, y: y, r: r})
-
-shape = rectangle({x: x, y: y, w: w, h: h})
-
-shape = ellipse({x: x, y: y, w: w, h: h})
-
-shape = line({x1: x1, y1: y1, x2: x2, y2: y2})
-
-shape = circle().translate({x: x, y: y}).rotate({angle: 45})
-
-shape = circle().translate({x: x, y: y}).rotate({angle: 45}).repeat({n: 12, transform: rotate({angle: 10})})
-
-p.draw = function() {
-  p.background(255);
-  shape.transform({x: 10}).show(p)
-}
-```
 
 ## Examples
 
@@ -140,10 +118,11 @@ shape.show(sk)
 
 ## TODO
 
+- [ ] when repeating and moving, the first shape before any transforms remains unmoving. use `repeatChildren`?
+
+
 - [ ] exception raising for line fn, and for others
 - [ ] implement polygon fn
-- [x] combining shapes 
-- [x] piping transforms together without shape `rotate().scale()`
 - [ ] exception handling becomes essential for editor 
 
 

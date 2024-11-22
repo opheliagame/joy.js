@@ -8,7 +8,7 @@ interface PointAttributes {
 interface CircleAttributes {
   cx: number;
   cy: number;
-  d: number;
+  r: number;
 }
 interface EllipseAttributes {
   x: number;
@@ -265,7 +265,7 @@ export class Circle extends Shape {
    * @param style - The style information for displaying the circle. Defaults to no styling or `{}`.
    */
   constructor(center = new Point(0, 0), radius = 100, style = {}) {
-    super("circle", { cx: center.x, cy: center.y, d: radius * 2 }, style);
+    super("circle", { cx: center.x, cy: center.y, r: radius }, style);
     this.center = center;
     this.radius = radius;
   }

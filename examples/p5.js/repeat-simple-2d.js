@@ -1,7 +1,6 @@
-// TODO not finished
+// TODO example not finished
 function setup() {
-  let canvas = createCanvas(400, 400);
-  let joy = joyP5.initJoyP5(canvas);
+  createCanvas(400, 400);
 
   background(220);
 
@@ -14,7 +13,8 @@ function setup() {
   stroke('black')
   push();
   translate(-width / 2, -height / 2);
-  joy
+  
+  let shape = joy
     .rectangle({ w: xedge-10, h: yedge-10 })
     .translate({ x: xedge / 2, y: yedge / 2 })
   .repeat({
@@ -25,6 +25,9 @@ function setup() {
     n: yres,
     transform: (index) => joy.translate({x: 0, y: index * yedge})
   })
-  .show()
+  
+  let renderer = new joy.P5Renderer(this)
+  renderer.show(shape)
+
   pop();
 }

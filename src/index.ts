@@ -1,152 +1,93 @@
-import p5 from "p5";
-import { Circle, Ellipse, Line, Point, Rectangle, Repeat, Rotate, Scale, Transformation, Translate } from './joy'
+import {
+  Circle,
+  Ellipse,
+  Line,
+  Point,
+  Rectangle,
+  Repeat,
+  Rotate,
+  Scale,
+  Transformation,
+  Translate,
+} from "./joy";
+import { map } from "./utils";
 
-declare global {
-  interface Window {
-    p5: typeof p5; 
-  }
+function point({ x = 0, y = 0, ...kwargs } = {}) {
+  return new Point(x, y, kwargs);
 }
 
-export class JoyP5 {
-  renderer: Drawable | undefined
-
-  constructor(renderer?: Drawable) {
-    this.renderer = renderer
-    
-  }
-
-  point({
-    x = 0, 
-    y = 0,
-    ...kwargs
-  }={}) {
-    // Creates a Point with x and y coordinates.
-    let drawable = new Point(x, y, kwargs)
-    // drawable.show(this.renderer)
-    return drawable
-  }
-  
-  circle({
-    x = 0, 
-    y = 0,
-    r = 100, 
-    ...kwargs
-  }={}) {
-    let drawable = new Circle(new Point(x=x, y=y), r, kwargs)
-    // TODO : possibly remove show in constructor because it stops chaining 
-    // drawable.show(this.renderer)
-    return drawable
-  }
-  
-  rectangle({
-    x = 0, 
-    y = 0,
-    w = 200,
-    h = 100,
-    ...kwargs
-  }={}) {
-    let drawable = new Rectangle(new Point(x=x, y=y), w, h, kwargs)
-    // drawable.show(this.renderer)
-    return drawable
-  }
-  
-  ellipse({
-    x = 0, 
-    y = 0,
-    w = 200,
-    h = 100,
-    ...kwargs
-  }={}) {
-    let drawable = new Ellipse(new Point(x=x, y=y), w, h, kwargs)
-    // drawable.show(this.renderer)
-    return drawable
-  }
-  
-  line({
-    x1 = -100, 
-    y1 = 0,
-    x2 = 100,
-    y2 = 0,
-    ...kwargs
-  }={}) {
-    let drawable = new Line(new Point(x1, y1), new Point(x2, y2), kwargs)
-    // drawable.show(this.renderer)
-    return drawable
-  }
-  
-  translate({
-    x = 0,
-    y = 0
-  }={x: 0, y: 0}) {
-    let drawable = new Translate(x, y)
-    // drawable.show()
-    return drawable
-  }
-  
-  rotate({
-    angle = 0
-  }={angle: 0}) {
-    let drawable = new Rotate(angle)
-    // drawable.show()
-    return drawable
-  }
-  
-  scale({
-    x = 1, 
-    y = 1
-  }={x: 1, y: 1}) {
-    let drawable = new Scale(x, y)
-    // drawable.show()
-    return drawable
-  }
-
-  repeat({
-    n,
-    transform,
-    fnkwargs = null
-  }: {n: number, transform: Transformation, fnkwargs: any}) {
-    let drawable = new Repeat(n, transform)
-    return drawable
-  }
-
+function circle({ x = 0, y = 0, r = 100, ...kwargs } = {}) {
+  return new Circle(new Point((x = x), (y = y)), r, kwargs);
 }
 
-
-export abstract class Drawable {
-  renderer: any
-  
-  show() {}
+function rectangle({ x = 0, y = 0, w = 200, h = 100, ...kwargs } = {}) {
+  return new Rectangle(new Point((x = x), (y = y)), w, h, kwargs);
 }
 
-class P5Renderer implements Drawable {
-  renderer: typeof p5;
+function ellipse({ x = 0, y = 0, w = 200, h = 100, ...kwargs } = {}) {
+  return new Ellipse(new Point((x = x), (y = y)), w, h, kwargs);
+}
 
-  constructor(renderer: typeof p5) {
-    this.renderer = renderer
+function line({
+  x1 = -100,
+  y1 = 0,
+  x2 = 100,
+  y2 = 0,
+  l = undefined,
+  ...kwargs
+} = {}) {
+  if (l !== undefined) {
+    return new Line(new Point(-l / 2, 0), new Point(l / 2, 0), kwargs);
   }
-
-  show(): void {
-    
-  }
-
+  return new Line(new Point(x1, y1), new Point(x2, y2), kwargs);
 }
 
-
-export function initJoyP5(): JoyP5 {
-  // let renderer = new P5Renderer(p5)
-
-  // init process
-  let renderer1 = (window.self as any) as p5 
-  renderer1.translate(renderer1.width/2, renderer1.height/2)
-
-  // make rectMode CENTER
-  renderer1.rectMode(renderer1.CENTER)
-
-  // make angleMode DEGREES
-  renderer1.angleMode(renderer1.DEGREES)
-
-
-  let joyP5 = new JoyP5()
-  return joyP5
-
+function translate({ x = 0, y = 0 } = { x: 0, y: 0 }) {
+  return new Translate(x, y);
 }
+
+function rotate({ angle = 0 } = { angle: 0 }) {
+  return new Rotate(angle);
+}
+
+function scale({ x = 1, y = 1 } = { x: 1, y: 1 }) {
+  return new Scale(x, y);
+}
+
+function repeat({
+  n,
+  transform,
+}: {
+  n: number;
+  transform: Transformation | ((index: number) => Transformation);
+}) {
+  let transforms = Array(n)
+    .fill(0)
+    .map((_, i) => {
+      let tr: Transformation;
+
+      if (typeof transform === "function") {
+        tr = transform(i);
+      } else {
+        tr = transform;
+      }
+      let t = transform instanceof Transformation ? new Repeat(i + 1, tr) : tr;
+
+      return t;
+    });
+
+  return transforms;
+}
+
+export {
+  point,
+  circle,
+  rectangle,
+  ellipse,
+  line,
+  translate,
+  rotate,
+  scale,
+  repeat,
+  map,
+};

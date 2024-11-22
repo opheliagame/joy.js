@@ -1,8 +1,8 @@
 {
-  "name": "joy.p5.js",
+  "name": "joy.js",
   "version": "1.0.0",
   "description": "A tiny creative coding library",
-  "main": "examples.js",
+  "main": "src/index.ts",
   "directories": {
     "example": "examples"
   },

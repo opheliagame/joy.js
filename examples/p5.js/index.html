@@ -11,7 +11,6 @@
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.5.0/prism-material-light.min.css" integrity="sha512-O5jY0oTgD2Elx8HWIERZc4ZpMfpXeTdmz03FfAWoieGoa940jVMFC4sm183QCcvHlQTmTgoV5im5KFPwj4B5xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js" integrity="sha512-hpZ5pDCF2bRCweL5WoA0/N1elet1KYL5mx3LP555Eg/0ZguaHawxNvEjF6O3rufAChs16HVNhEc6blF/rZoowQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- codemirror cdn -->
@@ -19,11 +18,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.3/codemirror.min.css" integrity="sha512-6sALqOPMrNSc+1p5xOhPwGIzs6kIlST+9oGWlI4Wwcbj1saaX9J3uzO3Vub016dmHV7hM+bMi/rfXLiF5DNIZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.3/mode/javascript/javascript.min.js" integrity="sha512-DJ/Flq7rxJDDhgkO49H/rmidX44jmxWot/ku3c+XXEF9XFal78KIpu7w6jEaQhK4jli1U3/yOH+Rp3cIIEYFPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <!-- TODO resolve, this triggers multiple imports -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.10.0/addons/p5.sound.min.js"></script>
     
-    <script src="/dist/joy.p5.js"></script>
+    <script src="/dist/joy.js"></script>
 
     <style>
       .CodeMirror {
@@ -46,19 +44,40 @@
      
       <br>
 
+      <div class="grid grid-cols-3">
+        <!-- <script src="texture-1.js"></script>
+        <script src="texture-2.js"></script>
+        <script src="texture-3.js"></script> -->
+
+      </div>
+
     </div>
 
-    <!-- <script src="rect-repeat-rotate.js"></script> -->
-    <!-- <script src="shape-repeat-grid.js"></script> -->
-    <!-- <script src="shape-simple-repeat-line.js"></script> -->
-    <!-- <script src="repeat-grid-1.js"></script> -->
-    <!-- <script src="movement-1.js"></script> -->
-    <!-- <script src="movement-2.js"></script> -->
-    <!-- <script src="mouse-3.js"></script> -->
+    <!-- Repeats -->
+    <!-- <script src="repeat-with-index-simple.js"></script> -->
+    <!-- <script src="repeat-with-index-style.js"></script> -->
+    <!-- <script src="repeat-simple-1d.js"></script> -->
+    <!-- <script src="repeat-simple-2d.js"></script> -->
+
+    <!-- Movement -->
+    <!-- <script src="movement-simple.js"></script> -->
+    <!-- <script src="movement-repeat-with-index.js"></script> -->
+    <!-- same as above, weak example -->
+    <!-- <script src="mouse-repeat-with-index.js"></script> -->
+
+    <!-- Textures -->
+    <!-- weak examples, just uses p5js  -->
     <!-- <script src="texture-1.js"></script> -->
     <!-- <script src="texture-2.js"></script> -->
-    <script src="texture-3.js"></script>
+     <!-- slightly better example -->
+    <!-- <script src="texture-repeat-with-index.js"></script> -->
 
+
+    <!-- <script src="logo.js"></script> -->
+
+    <!-- Demos -->
+    <!-- <script src="demos/1-phyllotaxis.js"></script> -->
+    <script src="demos/2-lsystem.js"></script>
 
     <!-- <script src="/dist/tests/ts-test.js" type="module"></script> -->
 

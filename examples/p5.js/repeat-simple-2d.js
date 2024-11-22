@@ -19,15 +19,18 @@ function setup() {
     .translate({ x: xedge / 2, y: yedge / 2 })
   .repeat({
     n: xres,
-    transform: (index) => joy.translate({ x: index * xedge, y: 0 }).rotate({angle: index})
+    transform: (index) => joy.translate({ x: index * xedge }).rotate({angle: index})
   })
   .repeat({
     n: yres,
-    transform: (index) => joy.translate({x: 0, y: index * yedge})
+    transform: (index) => joy.translate({ y: index * yedge })
   })
   
   let renderer = new joy.P5Renderer(this)
   renderer.show(shape)
+
+  console.log(shape.toString())
+  console.log(renderer.printDebug(shape))
 
   pop();
 }

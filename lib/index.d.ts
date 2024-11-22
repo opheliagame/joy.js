@@ -1,4 +1,5 @@
 import { Circle, Ellipse, Line, Point, Rectangle, Rotate, Scale, Transformation, Translate } from "./joy";
+import { P5Renderer, SVGRenderer } from "./renderer";
 import { map } from "./utils";
 declare function point({ x, y, ...kwargs }?: {
     x?: number | undefined;
@@ -43,4 +44,4 @@ declare function repeat({ n, transform, }: {
     n: number;
     transform: Transformation | ((index: number) => Transformation);
 }): Transformation[];
-export { point, circle, rectangle, ellipse, line, translate, rotate, scale, repeat, map, };
+export { point, circle, rectangle, ellipse, line, translate, rotate, scale, repeat, map, P5Renderer, SVGRenderer, };

@@ -43,7 +43,7 @@ export class Shape {
     | LineAttributes;
   kwargs: any;
   transform: Transformation[];
-  children: Shape[];
+  children: (Shape | Transformation)[];
   repeatChildren: Shape[];
 
   /**
@@ -63,7 +63,7 @@ export class Shape {
       | RectangleAttributes
       | LineAttributes,
     kwargs = {},
-    children: Shape[] = [],
+    children: (Shape | Transformation)[] = [],
     repeatChildren: Shape[] = []
   ) {
     this.tag = tag;
@@ -97,12 +97,22 @@ export class Shape {
   }
 
   /**
-   * Returns a string representation of Shape.
+   * Converts the current object to a string representation.
    *
-   * @returns - A string with the name of the shape and its' attributes.
+   * The string representation includes:
+   * - The tag and attributes of the object.
+   * - The transformations applied to the object.
+   * - The string representations of the object's children.
+   *
+   * @returns {String} A string representation of the object.
    */
-  toString() {
-    return `<${this.tag} ${this.attrs}>`;
+  toString(): String {
+    let attrs = Object.entries(this.attrs).map((a => a.join(':'))).join(' ')
+    let shapeString = `${this.tag} ${attrs}`
+    let transformString = this.transform.map(t => t.toString())
+    let children = this.children.map(c => c.toString()).join('\n')
+
+    return `${shapeString}\n${transformString}\n${children}`;
   }
 
   /**
@@ -114,7 +124,8 @@ export class Shape {
    */
   translate({ x = 0, y = 0 }) {
     let transform = new Translate(x, y);
-    this.transform.push(transform);
+    if(this.children.length > 0) this.children.push(transform);
+    else this.transform.push(transform) 
     return this;
   }
 
@@ -126,7 +137,8 @@ export class Shape {
    */
   rotate({ angle = 0 }) {
     let transform = new Rotate(angle);
-    this.transform.push(transform);
+    if(this.children.length > 0) this.children.push(transform);
+    else this.transform.push(transform)
     return this;
   }
 
@@ -139,7 +151,8 @@ export class Shape {
    */
   scale({ x = 1, y = 1 }) {
     let transform = new Scale(x, y);
-    this.transform.push(transform);
+    if(this.children.length > 0) this.children.push(transform);
+    else this.transform.push(transform)
     return this;
   }
 
@@ -346,7 +359,7 @@ export class Line extends Shape {
     end = new Point(100, 0),
     kwargs = {}
   ) {
-    super("line", { x1: start.x, y1: start.y, x2: end.x, y2: end.y });
+    super("line", { x1: start.x, y1: start.y, x2: end.x, y2: end.y }, kwargs);
     this.start = start;
     this.end = end;
   }
@@ -387,6 +400,21 @@ export class Transformation {
     this.tag = tag;
     this.attrs = attrs;
     this.children = children;
+  }
+
+  /**
+   * Converts the current object to a string representation.
+   *
+   * The string representation includes:
+   * - The tag and attributes of the object.
+   * - The string representations of the object's children.
+   *
+   * @returns {String} A string representation of the object.
+   */
+  toString(): String {
+    let attr = Object.entries(this.attrs).map(a => a.join(':')).join(' ')
+    let children = this.children.map(c => c.toString()).join('\n')
+    return `${this.tag} ${attr}\n${children}`
   }
 
   /**
@@ -509,8 +537,8 @@ export class Repeat extends Transformation {
     let children: Transformation[] = [];
     // the parent transformation + n-1 child transforms
     for (let i = 0; i < n - 1; i++) {
-      children = children.concat([transform, ...transform.children]);
+      children = children.concat(transform);
     }
-    super(transform.tag, transform.attrs, children);
+    super(transform.tag, transform.attrs, transform.children.concat(children));
   }
 }

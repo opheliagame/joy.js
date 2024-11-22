@@ -8,8 +8,8 @@ abstract class Renderer {
     this.renderer = renderer;
   }
 
-  show(shape: Shape) {}
-  showTransform(transform: Transformation) {}
+  // show(shape: Shape) {}
+  // showTransform(transform: Transformation) {}
 }
 
 declare global {
@@ -38,40 +38,42 @@ export class P5Renderer extends Renderer {
     console.log(shape);
   }
 
-  show(shape: Shape): void {
-    this.renderer["push"]();
-
-    shape.transform.forEach((t) => this.showTransform(t));
-
-    for (const [key, value] of Object.entries(shape.kwargs)) {
-      (this.renderer as any)[key](value);
+  show(shape: Shape | Transformation): void {
+    if (shape instanceof Shape) {
+      this.renderer["push"]();
+      shape.transform.forEach((t) => this.show(t));
+      for (const [key, value] of Object.entries(shape.kwargs)) {
+        (this.renderer as any)[key](value);
+      }
     }
 
     (this.renderer as any)[shape.tag](...Object.values(shape.attrs));
     shape.children.forEach((child) => this.show(child));
 
-    this.renderer["pop"]();
+    if (shape instanceof Shape) {
+      this.renderer["pop"]();
+    }
   }
 
-  showTransform(transform: Transformation): void {
-    (this.renderer as any)[transform.tag](...Object.values(transform.attrs));
+  // showTransform(transform: Transformation): void {
+  //   (this.renderer as any)[transform.tag](...Object.values(transform.attrs));
 
-    transform.children.forEach((transform) => {
-      this.showTransform(transform);
-    });
-  }
+  //   transform.children.forEach((transform) => {
+  //     this.showTransform(transform);
+  //   });
+  // }
 
-  printDebug(shape: Shape) {
+  printDebug(shape: Shape | Transformation) {
     let printString = "";
-    printString += "push()";
-    printString += "\n";
 
-    printString += shape.transform
-      .map((t) => this.printTransformDebug(t))
-      .join("\n");
+    if (shape instanceof Shape) {
+      printString += "push()";
+      printString += "\n";
+      printString += shape.transform.map((t) => this.printDebug(t)).join("\n");
 
-    for (const [key, value] of Object.entries(shape.kwargs)) {
-      printString += `${key}(${value})\n`;
+      for (const [key, value] of Object.entries(shape.kwargs)) {
+        printString += `${key}(${value})\n`;
+      }
     }
 
     printString += `${shape.tag}(${Object.values(shape.attrs).join(", ")})\n`;
@@ -80,26 +82,28 @@ export class P5Renderer extends Renderer {
       .map((child) => this.printDebug(child))
       .join("\n");
 
-    printString += "pop()\n";
+    if (shape instanceof Shape) {
+      printString += "pop()\n";
+    }
 
     return printString;
   }
 
-  printTransformDebug(transform: Transformation) {
-    let printString = "";
+  // printTransformDebug(transform: Transformation) {
+  //   let printString = "";
 
-    printString += `${transform.tag}(${Object.values(transform.attrs).join(
-      ", "
-    )})\n`;
+  //   printString += `${transform.tag}(${Object.values(transform.attrs).join(
+  //     ", "
+  //   )})\n`;
 
-    printString += transform.children
-      .map((transform) => {
-        return this.printTransformDebug(transform);
-      })
-      .join("\n");
+  //   printString += transform.children
+  //     .map((transform) => {
+  //       return this.printTransformDebug(transform);
+  //     })
+  //     .join("\n");
 
-    return printString;
-  }
+  //   return printString;
+  // }
 }
 
 export class SVGRenderer extends Renderer {
@@ -130,27 +134,32 @@ export class SVGRenderer extends Renderer {
     document.body.appendChild(svg);
   }
 
-  getSvgElement(shape: Shape): Element {
+  getSvgElement(shape: Shape | Transformation): Element {
     const shapeElement = this.renderer.createElementNS(
       this.namespace,
       shape.tag
     );
+
     for (const [key, value] of Object.entries(shape.attrs)) {
       shapeElement.setAttribute(key, value.toString());
     }
-    for (const [key, value] of Object.entries(shape.kwargs)) {
-      shapeElement.setAttribute(key, (value as any).toString());
-    }
 
-    let transformString = shape.transform
-      .map((t) => {
-        let transformString = `${t.tag}(${Object.values(t.attrs).join(",")})`;
-        let nestedTransforms = t.children.map(
-          (child) => `${child.tag}(${Object.values(child.attrs).join(",")})`
-        );
-        return `${transformString} ${nestedTransforms.join(" ")}`;
-      })
-      .join("");
+    let transformString = "";
+    if (shape instanceof Shape) {
+      for (const [key, value] of Object.entries(shape.kwargs)) {
+        shapeElement.setAttribute(key, (value as any).toString());
+      }
+
+      transformString = shape.transform
+        .map((t) => {
+          let transformString = `${t.tag}(${Object.values(t.attrs).join(",")})`;
+          let nestedTransforms = t.children.map(
+            (child) => `${child.tag}(${Object.values(child.attrs).join(",")})`
+          );
+          return `${transformString} ${nestedTransforms.join(" ")}`;
+        })
+        .join("");
+    }
 
     if (shape.children.length !== 0) {
       let groupElement = this.renderer.createElementNS(this.namespace, "g");

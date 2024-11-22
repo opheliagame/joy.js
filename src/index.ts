@@ -10,6 +10,7 @@ import {
   Transformation,
   Translate,
 } from "./joy";
+import { P5Renderer, SVGRenderer } from "./renderer";
 import { map } from "./utils";
 
 function point({ x = 0, y = 0, ...kwargs } = {}) {
@@ -90,4 +91,7 @@ export {
   scale,
   repeat,
   map,
+
+  P5Renderer,
+  SVGRenderer,
 };

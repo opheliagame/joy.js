@@ -35,7 +35,7 @@ export declare class Shape {
     attrs: PointAttributes | CircleAttributes | EllipseAttributes | RectangleAttributes | LineAttributes;
     kwargs: any;
     transform: Transformation[];
-    children: Shape[];
+    children: (Shape | Transformation)[];
     repeatChildren: Shape[];
     /**
      * Creates an instance of Shape.
@@ -45,7 +45,7 @@ export declare class Shape {
      * @param kwargs - The styling information to be used before drawing the shape.
      * @param children - Other shapes that are drawn relative to the current instance of Shape.
      */
-    constructor(tag: ShapeType, attrs: PointAttributes | CircleAttributes | EllipseAttributes | RectangleAttributes | LineAttributes, kwargs?: {}, children?: Shape[], repeatChildren?: Shape[]);
+    constructor(tag: ShapeType, attrs: PointAttributes | CircleAttributes | EllipseAttributes | RectangleAttributes | LineAttributes, kwargs?: {}, children?: (Shape | Transformation)[], repeatChildren?: Shape[]);
     /**
      * Returns a clone of the current Shape instance with new styling information if available.
      *
@@ -61,11 +61,16 @@ export declare class Shape {
      */
     add(shape: Shape): this;
     /**
-     * Returns a string representation of Shape.
+     * Converts the current object to a string representation.
      *
-     * @returns - A string with the name of the shape and its' attributes.
+     * The string representation includes:
+     * - The tag and attributes of the object.
+     * - The transformations applied to the object.
+     * - The string representations of the object's children.
+     *
+     * @returns {String} A string representation of the object.
      */
-    toString(): string;
+    toString(): String;
     /**
      * Applies a Translate transformation to the current Shape instance.
      *
@@ -232,6 +237,16 @@ export declare class Transformation {
      * @param children - Other transformations that are applied relative to the parent transformation.
      */
     constructor(tag: string, attrs: TranslateAttributes | RotateAttributes | ScaleAttributes, children?: Transformation[]);
+    /**
+     * Converts the current object to a string representation.
+     *
+     * The string representation includes:
+     * - The tag and attributes of the object.
+     * - The string representations of the object's children.
+     *
+     * @returns {String} A string representation of the object.
+     */
+    toString(): String;
     /**
      * Adds a Translate transformation to the current transformation.
      *

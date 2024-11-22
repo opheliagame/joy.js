@@ -55,8 +55,9 @@
         .intro-text {
           /* position: absolute; */
           font-size: larger;
-          border: solid black 2px;
+          /* border: solid black 2px; */
           padding: 2rem;
+          backdrop-filter: blur(8px);
         }
       }
     </style>
@@ -75,44 +76,49 @@
     
   </head>
   
-  <body class="w-screen h-screen overflow-none font-body">
-    <div class="w-full overflow-none">
+  <body class="w-screen h-screen overflow-hidden font-body">
+    <div class="w-full h-full overflow-hidden">
       <div class="absolute top-0 left-0 w-full z-20">
         <div class="flex flex-row md:flex-col w-full gap-2 md:px-4 md:py-2">
           <!-- Nav -->
-          <div class="w-full flex md:flex-row flex-col md:justify-between items-center bg-white-100 border border-magenta p-2">
-            <a href="https://github.com/opheliagame/joy.js">
-              <h1 class="text-4xl md:text-6xl text-white bg-magenta md:bg-white md:text-magenta">joy.js</h1>
+          <div class="w-full flex md:flex-row flex-col md:justify-between items-center bg-magenta md:bg-transparent max-h-min p-2">
+            <a href="/">
+              <h1 class="flex flex-row gap-1 pr-2 items-end text-4xl md:text-6xl text-white md:text-magenta md:bg-white">
+                <!-- <img width="32" height="32" class="md:hidden" src="/assets/icon.svg" alt="Joy.js logo svg"> -->
+                joy.js
+              </h1>
             </a>
-            <div class="flex flex-col">
+            <div class="flex flex-col md:bg-white gap-2">
               <a href="./docs/index.html">
-                <button class="text-2xl md:text-3xl text-magenta">
-                  Docs
-                </button>
+                <button class="text-xl md:text-3xl text-white md:text-magenta">API Reference</button>
               </a>
-              <a href="./docs/index.html">
-                <button class="text-2xl md:text-3xl text-magenta">
-                  Docs
-                </button>
+              <a href="https://github.com/opheliagame/joy.js" target="_blank">
+                <button class="text-xl md:text-3xl text-white md:text-magenta">Github</button>
               </a>
+              
+
+              
             </div>
           </div>
 
           <!-- Intro -->
-          <article class="text-2xl md:text-3xl flex flex-col gap-4 backdrop-blur overflow-y-auto"></article>
+          <article class="text-2xl md:text-3xl flex flex-col md:grid md:grid-cols-2 md:w-1/2 gap-4 overflow-x-hidden overflow-y-auto"></article>
 
+          <aside class="hidden md:block text-lg py-4">
+            <a href="https://www.canva.com/design/DAGW0_780w4/sqU39rByWuPXnI3jXI9rmg/view?utm_content=DAGW0_780w4&utm_campaign=designshare&utm_medium=link&utm_source=editor">
+              I am speaking about it at JSConf Japan, here is the presentation 
+            </a>
+          </aside>
 
         </div>
 
       </div>
 
-      
       <!-- <div>
         <p></p>
         <p>joy is a creative coding library that makes it easy for its' users to create shapes, combine them and apply transformations, both simple and higher order ones</p>
         <p>p5.js is also a creative coding library with a focus on making coding accessible and inclusive for artists, designers, educators, beginners, and anyone else!</p>
       </div> -->
-
 
       <!-- <h2 class="text-xl md:text-3xl uppercase">Key motivations</h2>
       <div>
@@ -122,7 +128,6 @@
           <li>p5.js also has a lot of support for camera, video and image. bringing this into joy is also exciting</li>
         </ul>
       </div> -->
-
       
     </div>
 

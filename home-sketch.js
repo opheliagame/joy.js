@@ -5,14 +5,13 @@ const introTexts = [
   "it is simple and concise",
 ]
 const seed = Math.random()*Date.now()
+let isMobile
 
 function setup() {
   createCanvas(windowWidth, windowHeight, document.getElementById("home-canvas"))
-  textFont("Itim")
-  textSize(36)
+  isMobile = windowWidth < 768
 
   drawText()
-
 }
 
 function draw() {
@@ -24,10 +23,6 @@ function draw() {
   drawJoyjsLogo()
   pop()
 
-
-  
-  
- 
 }
 
 function drawJoyjsLogo() {
@@ -42,18 +37,19 @@ function drawJoyjsLogo() {
 
   strokeWeight(2)
   let side = 5
-  let or = 60/2/2, ir = 48/2/2
+  let scl = isMobile ? 2 : 1
+  let or = 60/2/scl, ir = 48/2/scl
   let innerCircle = joy.circle({r: ir, 'fill': isblinking ? 'white' : 'magenta', 'stroke': 'magenta'}).rotate({angle: 180-360/side}).translate({x: -(or-ir)/2, y: -(or-ir)/2})
   let shape = joy.circle({r: or, 'fill': isblinking ? 'magenta' : 'white', 'stroke': isblinking ? 'white' : 'magenta'}).add(innerCircle)
   .translate({y: -or})
-  .rotate({angle: 72/4})
+  .rotate({angle: 360/side/4})
   .repeat({
     n: side,
-    transform: joy.rotate({angle: -72}).translate({y: -or})
+    transform: joy.rotate({angle: -360/side}).translate({y: -or})
   })
   .repeat({
     n: n,
-    transform: (i) => joy.rotate({ angle: angle * i + (beat * 10) }).translate({ x: Math.sqrt(i) * 60 }),
+    transform: (i) => joy.rotate({ angle: angle * i + (beat * 10) }).translate({ x: Math.sqrt(i) * 120/scl }),
   })
   
   
@@ -77,8 +73,12 @@ function drawText() {
 
     document.body.querySelector('article').appendChild(p)
 
-    
   }
 
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  isMobile = windowWidth < 768
 
 }

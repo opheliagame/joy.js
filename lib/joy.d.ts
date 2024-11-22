@@ -6,7 +6,7 @@ interface PointAttributes {
 interface CircleAttributes {
     cx: number;
     cy: number;
-    d: number;
+    r: number;
 }
 interface EllipseAttributes {
     x: number;

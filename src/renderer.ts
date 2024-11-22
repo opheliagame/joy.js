@@ -32,6 +32,9 @@ export class P5Renderer extends Renderer {
 
     // make angleMode DEGREES
     this.renderer.angleMode(this.renderer.DEGREES);
+
+    // make ellipseMode RADIUS
+    this.renderer.ellipseMode(this.renderer.RADIUS)
   }
 
   debug(shape: Shape): void {
@@ -118,11 +121,12 @@ export class SVGRenderer extends Renderer {
     svg.setAttribute("xmlns", this.namespace);
     svg.setAttribute("width", "100vw");
     svg.setAttribute("height", "100vh");
+    svg.setAttribute("viewBox", "-200 -200 400 400")
 
     const shapeElement = this.getSvgElement(shape);
     shapeElement.setAttribute(
       "transform",
-      `translate(-50%,-50%) ${shapeElement.getAttribute("transform")}`
+      `${shapeElement.getAttribute("transform")}`
     );
 
     svg.appendChild(shapeElement);

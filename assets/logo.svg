@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-200 -200 400 400">
+  <g transform="translate(0,-90) rotate(-18) ">
+    <circle cx="0" cy="0" r="60" fill="magenta"></circle>
+    <circle
+      cx="0"
+      cy="0"
+      r="48"
+      fill="white"
+      transform="rotate(-108) translate(-6,-6) "
+    ></circle>
+    <g transform="rotate(72) ">
+      <circle cx="0" cy="0" r="60" fill="magenta"></circle>
+      <circle
+        cx="0"
+        cy="0"
+        r="48"
+        fill="white"
+        transform="rotate(-108) translate(-6,-6) "
+      ></circle>
+    </g>
+    <g transform="rotate(72) rotate(72) translate(0,-120)">
+      <circle cx="0" cy="0" r="60" fill="magenta"></circle>
+      <circle
+        cx="0"
+        cy="0"
+        r="48"
+        fill="white"
+        transform="rotate(-108) translate(-6,-6) "
+      ></circle>
+    </g>
+    <g
+      transform="rotate(72) rotate(72) translate(0,-120) rotate(72) translate(0,-120)"
+    >
+      <circle cx="0" cy="0" r="60" fill="magenta"></circle>
+      <circle
+        cx="0"
+        cy="0"
+        r="48"
+        fill="white"
+        transform="rotate(-108) translate(-6,-6) "
+      ></circle>
+    </g>
+    <g
+      transform="rotate(72) rotate(72) translate(0,-120) rotate(72) translate(0,-120) rotate(72) translate(0,-120)"
+    >
+      <circle cx="0" cy="0" r="60" fill="magenta"></circle>
+      <circle
+        cx="0"
+        cy="0"
+        r="48"
+        fill="white"
+        transform="rotate(-108) translate(-6,-6) "
+      ></circle>
+    </g>
+    <g
+      transform="rotate(72) rotate(72) translate(0,-120) rotate(72) translate(0,-120) rotate(72) translate(0,-120) rotate(72) translate(0,-120)"
+    >
+      <circle cx="0" cy="0" r="60" fill="magenta"></circle>
+      <circle
+        cx="0"
+        cy="0"
+        r="48"
+        fill="white"
+        transform="rotate(-108) translate(-6,-6) "
+      ></circle>
+    </g>
+  </g>
+</svg>

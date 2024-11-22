@@ -1,183 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>joy(x)p5js - fosshack 2021 👩‍💻</title>
+    <!-- Page Title -->
+    <title>joy.js | A tiny creative coding library</title>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="A tiny creative coding library">
+    <meta name="keywords" content="library, JavaScript, creative coding, tools">
+    <meta name="author" content="opheliagame">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="joy.js | A tiny creative coding library">
+    <meta property="og:description" content="A tiny creative coding library">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="/images/social-preview.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="joy.js | A tiny creative coding library">
+    <meta name="twitter:description" content="A tiny creative coding library">
+    <meta name="twitter:image" content="/images/social-preview.png">
+
+    <!-- Favicon -->
+    <!-- `sizes="any"` is to fix Chrome bug -->
+    <link rel="icon" href="/assets/favicon.ico" sizes="any">
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <link rel="manifest" href="/assets/manifest.webmanifest">
 
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.5.0/prism-material-light.min.css" integrity="sha512-O5jY0oTgD2Elx8HWIERZc4ZpMfpXeTdmz03FfAWoieGoa940jVMFC4sm183QCcvHlQTmTgoV5im5KFPwj4B5xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              'body': ['Itim', 'cursive']
+            },
+            colors: {
+              clifford: '#da373d',
+              magenta: '#ff00ff'
+            }
+          }
+        }
+      }
+    </script>
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .intro-text {
+          /* position: absolute; */
+          font-size: larger;
+          border: solid black 2px;
+          padding: 2rem;
+        }
+      }
+    </style>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.5.0/prism-material-light.min.css" integrity="sha512-O5jY0oTgD2Elx8HWIERZc4ZpMfpXeTdmz03FfAWoieGoa940jVMFC4sm183QCcvHlQTmTgoV5im5KFPwj4B5xg==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
 
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js" integrity="sha512-hpZ5pDCF2bRCweL5WoA0/N1elet1KYL5mx3LP555Eg/0ZguaHawxNvEjF6O3rufAChs16HVNhEc6blF/rZoowQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Home Sketch -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.1/addons/p5.sound.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js" integrity="sha512-hpZ5pDCF2bRCweL5WoA0/N1elet1KYL5mx3LP555Eg/0ZguaHawxNvEjF6O3rufAChs16HVNhEc6blF/rZoowQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
-    <script src="utils.js"></script>
-    <script src="joy/joy.js"></script>
+    <script src="dist/joy.js"></script>
+
+    
   </head>
   
-  <body>
-    <div class="container mx-auto px-8 lg:px-10 py-10 md:text-lg">
-      <div class="flex justify-between items-center">
-        <a href="https://github.com/opheliagame/joy-p5js">
-          <h1 class="text-4xl md:text-6xl text-blue-500 underline">joy.js</h1>
-        </a>
-        <div>
-          <a href="./docs/index.html">
-            <button class="bg-blue-600 text-sm md:text-base px-2 text-white">
-              Docs 🥳
-            </button>
-          </a>
-          <a href="./editor.html">
-            <button class="bg-gray-100 text-sm md:text-base px-2">
-              Try Editor
-            </button>
-          </a>
+  <body class="w-screen h-screen overflow-none font-body">
+    <div class="w-full overflow-none">
+      <div class="absolute top-0 left-0 w-full z-20">
+        <div class="flex flex-row md:flex-col w-full gap-2 md:px-4 md:py-2">
+          <!-- Nav -->
+          <div class="w-full flex md:flex-row flex-col md:justify-between items-center bg-white-100 border border-magenta p-2">
+            <a href="https://github.com/opheliagame/joy.js">
+              <h1 class="text-4xl md:text-6xl text-white bg-magenta md:bg-white md:text-magenta">joy.js</h1>
+            </a>
+            <div class="flex flex-col">
+              <a href="./docs/index.html">
+                <button class="text-2xl md:text-3xl text-magenta">
+                  Docs
+                </button>
+              </a>
+              <a href="./docs/index.html">
+                <button class="text-2xl md:text-3xl text-magenta">
+                  Docs
+                </button>
+              </a>
+            </div>
+          </div>
+
+          <!-- Intro -->
+          <article class="text-2xl md:text-3xl flex flex-col gap-4 backdrop-blur overflow-y-auto"></article>
+
+
         </div>
-        
+
       </div>
-      <div>
-        <p>this library provides joy, a tiny creative coding library, with <a href="http://p5js.org/" class="text-blue-500 underline">p5.js</a></p>
+
+      
+      <!-- <div>
+        <p></p>
         <p>joy is a creative coding library that makes it easy for its' users to create shapes, combine them and apply transformations, both simple and higher order ones</p>
         <p>p5.js is also a creative coding library with a focus on making coding accessible and inclusive for artists, designers, educators, beginners, and anyone else!</p>
-      </div>
+      </div> -->
 
-      <br>
 
-      <h2 class="text-xl md:text-3xl uppercase">Key motivations</h2>
+      <!-- <h2 class="text-xl md:text-3xl uppercase">Key motivations</h2>
       <div>
         <p>these two libraries have distinct ways of thinking about graphics and this is why some tasks are simpler in p5.js and others in joy. as a simple example, creating a camera capture is quite simple with p5.js and applying a higher order transformation like repeat is much simpler with joy. this project is an attempt to combine the best of both of these worlds (miley cyrus ref for anyone who's a fan haha <3)</p>
         <ul class="list-disc">
           <li>currently joy does not support animating shapes. animation of shapes created using joy driven with p5js is exciting</li>
           <li>p5.js also has a lot of support for camera, video and image. bringing this into joy is also exciting</li>
         </ul>
-      </div>
+      </div> -->
 
-      <br>
-
-      <div>
-        <h2 class="text-xl md:text-3xl uppercase">API</h2>
-        <pre>
-          <code class="language-js">
-shape = point({x: x, y: y})
-
-shape = circle({x: x, y: y, r: r})
-
-shape = rectangle({x: x, y: y, w: w, h: h})
-
-shape = ellipse({x: x, y: y, w: w, h: h})
-
-shape = line({x1: x1, y1: y1, x2: x2, y2: y2})
-
-shape = circle().translate({x: x, y: y}).rotate({angle: 45})
-
-shape = circle().translate({x: x, y: y}).rotate({angle: 45}).repeat({n: 12, transform: rotate({angle: 10})})
-
-p.draw = function() {
-  p.background(255);
-  shape.transform({x: 10}).show(p)
-}
-          </code>
-        </pre>
-      </div>
-
-      <br>
-
-      <div class="sketches">
-        <h2 class="text-xl md:text-3xl uppercase">Examples</h2>
-        <div class="row flex flex-col md:flex-row justify-center" id="row1">
-          <div class="sketch"></div>
-          <div class="code flex-1">
-            <pre class="h-full">
-              <code class="language-js">
-c = circle()
-              </code>
-            </pre>
-          </div>
-        </div>
-
-        <div class="row flex flex-col md:flex-row justify-center" id="row2">
-          <div class="sketch"></div>
-          <div class="code flex-1">
-            <pre class="h-full">
-              <code class="language-js">
-c1 = circle({x: -50, y: 0, r: 50})
-c2 = circle({x: 50, y: 0, r: 50})
-              </code>
-            </pre>
-          </div>
-        </div>
-
-        <div class="row flex flex-col md:flex-row justify-center" id="row3">
-          <div class="sketch"></div>
-          <div class="code flex-1">
-            
-          </div>
-        </div>
-
-        <div class="row flex flex-col md:flex-row justify-center" id="row4">
-          <div class="sketch"></div>
-          <div class="code flex-1">
-            <pre class="h-full">
-              <code class="language-js">
-const sketch5 = new p5(getP5Instance(), document.querySelector('#row4 .sketch'))
-function eye(outer, inner, theta) {
-  let r = outer.radius
-  let innern = inner.translate({x: outer.center.x, y: outer.center.y})
-                    .rotate({angle: theta})
-                    .translate({x: r/2})
-  return outer.add(innern)
-}
-
-sketch5.draw = () => {
-  drawGrid(sketch5)
-  
-  let theta = sketch5.millis()/10
-  let e = eye(circle({x: 100, y: 100, r: 50}), circle({r: 25}), theta)
-  let eyes = e.repeat({n: 4, transform: rotate({angle: 90})})
-  
-  eyes.show(sketch5)
-}
-              </code>
-            </pre>
-          </div>
-        </div>
-
-        <div class="row flex flex-col md:flex-row justify-center" id="row5">
-          <div class="sketch"></div>
-          <div class="code flex-1">
-            <pre class="h-full">
-              <code class="language-js">
-const sketch6 = new p5(getP5Instance(), document.querySelector('#row5 .sketch'))
-var n = 300;
-var c = 20;
-sketch6.draw = () => {
-  drawGrid(sketch6)
-  
-  sketch6.rotate(n * 0.3);
-  let theta = sketch6.millis()/10
-
-  for (var i = 0; i < n; i++) {
-    var a = i * 137.5;
-    var r = c * sketch6.sqrt(i);
-    var x = r * sketch6.cos(a);
-    var y = r * sketch6.sin(a)
-    // sketch6.fill(0);
-    let e = eye(circle({x: x, y: y, r: 10}), circle({r: 5}), theta)
-    e.show(sketch6)
-    // circle({x: x, y: y, r: 2}).show(sketch6)
-  }
-
-}
-              </code>
-            </pre>
-          </div>
-        </div>
-
-      </div>
+      
     </div>
 
-    <script src="examples.js"></script>
+    <canvas id="home-canvas" class="absolute top-0 left-0"></canvas>
+    <script src="./home-sketch.js"></script>
+
   </body>
 </html>
